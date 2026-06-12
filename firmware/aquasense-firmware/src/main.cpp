@@ -21,5 +21,13 @@ void loop() {
   Serial.print(temperatura);
   Serial.println(" °C");
 
+  if (temperatura > 30.0){
+    Serial.println(" ALERTA: Temperatura ALTA!");
+  } else if (temperatura < 22.0) {
+    Serial.println(" ALERTA: Temperatura BAIXA!");
+  } else {
+    Serial.println("Temperatura NORMAL.");
+  }
+
   delay(2000);
 }
