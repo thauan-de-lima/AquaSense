@@ -1,6 +1,6 @@
-# 🐠 AquaSense teste
+# 🐠 AquaSense
 
- teste ESP32-based IoT system for aquarium monitoring and automation.
+ESP32-based IoT system for aquarium monitoring and automation.
 
 ## 📋 Features (planned)
 - [ ] Temperature monitoring
