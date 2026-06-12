@@ -1,8 +1,17 @@
 {
   "version": 1,
-  "author": "Thaum FT",
+  "author": "Thauan De Lima",
   "editor": "wokwi",
-  "parts": [ { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} } ],
-  "connections": [ [ "esp:TX", "$serialMonitor:RX", "", [] ], [ "esp:RX", "$serialMonitor:TX", "", [] ] ],
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-ds18b20", "id": "ds1", "top": 80, "left": 200, "attrs": { "celsius": "26.5" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "ds1:VCC", "esp:3V3", "red", [] ],
+    [ "ds1:GND", "esp:GND.1", "black", [] ],
+    [ "ds1:DQ", "esp:4", "yellow", [] ]
+  ],
   "dependencies": {}
 }
