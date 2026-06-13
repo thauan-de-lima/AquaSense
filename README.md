@@ -31,5 +31,6 @@ ESP32-based IoT system for aquarium monitoring and automation.
 ## 👨‍💻 Author
 **Thauan De Lima** — Computer Engineering student at FIAP
 
-## Development Log
-- **11/06/2026** - Project started
+## 📅 Development Log
+- **11/06/2026** — Project started, repository created, folder structure defined
+- **12/06/2026** — First firmware running on ESP32, DS18B20 temperature sensor, WiFi connection, MQTT publishing to HiveMQ Cloud
