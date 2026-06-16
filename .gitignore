@@ -220,3 +220,6 @@ __marimo__/
 backend/.env
 backend/node_modules/
 firmware/aquasense-firmware/include/credentials.h
+
+#Notas pessoais
+notas/
