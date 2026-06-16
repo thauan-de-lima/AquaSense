@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaSense Dashboard</title>
+</head>
+<body>
+    <h1>AquaSense DashBoard</h1>
+    <p>Temperatura: <span id="temperatura">--</span>°C</p>
+    <p>Ultima atualização: <span id="atualizacao">--</span></p>
+    <script>
+    function buscarDados() {
+        fetch('http://localhost:3000/api/dados')
+            .then(response => response.json())
+            .then(dados => {
+                document.getElementById('temperatura').innerHTML = dados.temperatura;
+                document.getElementById('atualizacao').innerHTML = dados.ultimaAtualizacao;
+            });
+    }
+
+    buscarDados();
+    setInterval(buscarDados, 2000);
+</script>
+</body>
+</html>

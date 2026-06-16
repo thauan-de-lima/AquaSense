@@ -1,8 +1,10 @@
 require('dotenv').config();
 const mqtt = require('mqtt');
 const express = require('express');
-
+const cors = require('cors');
 const app = express();
+
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 const mqttClient = mqtt.connect(`mqtts://${process.env.MQTT_HOST}:${process.env.MQTT_PORT}`, {
