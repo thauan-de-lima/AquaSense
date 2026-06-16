@@ -8,3 +8,6 @@ include/credentials.h
 # Backend credentials
 backend/credentials.env
 backend/node_modules
+
+#Notas Pessoais
+notas/

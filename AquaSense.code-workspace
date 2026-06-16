@@ -7,5 +7,7 @@
 			"path": "firmware/aquasense-firmware"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "AquaSense"
+	}
 }

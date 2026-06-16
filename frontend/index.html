@@ -4,23 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AquaSense Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0a1628;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #00d4ff;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: #103481;
+            border: 1px solid #00d4ff33;
+            border-radius: 16px;
+            padding: 30px 40px;
+            text-align: center;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .card-label {
+            font-size: 0.9rem;
+            color: #8899aa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .atualizacao {
+            font-size: 0.8rem;
+            color: #8899aa;
+        }
+    </style>
 </head>
 <body>
-    <h1>AquaSense DashBoard</h1>
-    <p>Temperatura: <span id="temperatura">--</span>°C</p>
-    <p>Ultima atualização: <span id="atualizacao">--</span></p>
-    <script>
-    function buscarDados() {
-        fetch('http://localhost:3000/api/dados')
-            .then(response => response.json())
-            .then(dados => {
-                document.getElementById('temperatura').innerHTML = dados.temperatura;
-                document.getElementById('atualizacao').innerHTML = dados.ultimaAtualizacao;
-            });
-    }
+     <h1>🐠 AquaSense</h1>
 
-    buscarDados();
-    setInterval(buscarDados, 2000);
+    <div class="card">
+        <p class="card-label">Temperatura</p>
+        <p class="card-value"><span id="temperatura">--</span>°C</p>
+    </div>
+
+    <p class="atualizacao">Ultima atualizacao: <span id="atualizacao">--</span></p>
+
+    <script>
+        function buscarDados() {
+            fetch(`http://${window.location.hostname}:3000/api/dados`)
+                .then(response => response.json())
+                .then(dados => {
+                    document.getElementById('temperatura').innerHTML = dados.temperatura;
+                    document.getElementById('atualizacao').innerHTML = dados.ultimaAtualizacao;
+                });
+        }
+
+        buscarDados();
+        setInterval(buscarDados, 2000);
 </script>
 </body>
 </html>
