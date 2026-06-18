@@ -26,13 +26,12 @@ ESP32-based IoT system for aquarium monitoring and automation.
 🔧 Project under construction...
 
 ## 📸 The Aquarium
-## 📸 The Aquarium
 
-![Aquário AquaSense](docs/aquario.jpg)
+![Aquário AquaSense](docs/AquariumESP32IoT.jpeg)
 
 ## 📊 Dashboard
 
-![Dashboard AquaSense](docs/dashboard.jpg)
+![Dashboard AquaSense](docs/AquariumTemperature.png)
 
 ## 👨‍💻 Author
 **Thauan De Lima** — Computer Engineering student at FIAP
