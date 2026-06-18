@@ -4,14 +4,21 @@
   "editor": "wokwi",
   "parts": [
     { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
-    { "type": "wokwi-ds18b20", "id": "ds1", "top": 80, "left": 200, "attrs": { "celsius": "26.5" } }
+    {
+      "type": "wokwi-ds18b20",
+      "id": "ds1",
+      "top": 12.02,
+      "left": -145.23,
+      "rotate": 270,
+      "attrs": { "celsius": "26.5" }
+    }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "ds1:VCC", "esp:3V3", "red", [] ],
-    [ "ds1:GND", "esp:GND.1", "black", [] ],
-    [ "ds1:DQ", "esp:4", "yellow", [] ]
+    [ "esp:GND.1", "ds1:GND", "black", [ "h-14.21", "v-105.6" ] ],
+    [ "ds1:DQ", "esp:4", "yellow", [ "h86.4", "v182.4", "h134.4", "v-76.8" ] ]
   ],
   "dependencies": {}
 }
