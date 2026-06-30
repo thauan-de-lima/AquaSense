@@ -24,32 +24,51 @@ const mqttClient = mqtt.connect(`mqtts://${process.env.MQTT_HOST}:${process.env.
 
 let dadosAquario = {
   temperatura: null,
+  temperaturaAmbiente: null,
+  umidade: null,
   ultimaAtualizacao: null,
 };
 
 mqttClient.on('connect', () => {
   console.log('Backend conectado ao broker MQTT!');
   mqttClient.subscribe('aquasense/temperatura');
-  console.log('Inscrito no topic: aquasense/temperatura');
+  mqttClient.subscribe('aquasense/temperatura_ambiente');
+  mqttClient.subscribe('aquasense/umidade');
+  console.log('Inscrito nos tópicos AquaSense');
 });
 
 mqttClient.on('message', (topic, message) => {
   const valor = parseFloat(message.toString());
   console.log(`Dado recebido — ${topic}: ${valor}`);
 
+  dadosAquario.ultimaAtualizacao = new Date().toISOString();
+
   if (topic === 'aquasense/temperatura') {
     dadosAquario.temperatura = valor;
-    dadosAquario.ultimaAtualizacao = new Date().toISOString();
-
-    // Salvar no InfluxDB
     const point = new Point('temperatura')
       .tag('sensor', 'ds18b20')
       .tag('local', 'aquario')
       .floatField('valor', valor);
-
     writeApi.writePoint(point);
-    writeApi.flush().catch(err => console.error('Erro ao salvar no InfluxDB:', err));
+
+  } else if (topic === 'aquasense/temperatura_ambiente') {
+    dadosAquario.temperaturaAmbiente = valor;
+    const point = new Point('temperatura_ambiente')
+      .tag('sensor', 'dht22')
+      .tag('local', 'ambiente')
+      .floatField('valor', valor);
+    writeApi.writePoint(point);
+
+  } else if (topic === 'aquasense/umidade') {
+    dadosAquario.umidade = valor;
+    const point = new Point('umidade')
+      .tag('sensor', 'dht22')
+      .tag('local', 'ambiente')
+      .floatField('valor', valor);
+    writeApi.writePoint(point);
   }
+
+  writeApi.flush().catch(err => console.error('Erro ao salvar no InfluxDB:', err));
 });
 
 app.get('/api/dados', (req, res) => {
