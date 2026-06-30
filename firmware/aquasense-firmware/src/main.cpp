@@ -2,14 +2,18 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <WiFi.h>
-#include <WificlientSecure.h>
+#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include <DHT.h>
 #include "credentials.h"
 
 #define SENSOR_PIN 4
+#define DHT_PIN 5
+#define DHT_TYPE DHT22
 
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
+DHT dht(DHT_PIN, DHT_TYPE);
 WiFiClientSecure espClient;
 PubSubClient mqtt(espClient);
 
@@ -33,7 +37,7 @@ void conectarMQTT() {
   mqtt.setServer(MQTT_HOST, MQTT_PORT);
 
   Serial.print("Conectando ao broker MQTT");
-  while (!mqtt.connected()){
+  while (!mqtt.connected()) {
     if (mqtt.connect("ESP32_AquaSense", MQTT_USER, MQTT_PASSWORD)) {
       Serial.println("");
       Serial.println("MQTT conectado!");
@@ -47,9 +51,10 @@ void conectarMQTT() {
 void setup() {
   Serial.begin(115200);
   sensors.begin();
+  dht.begin();
   conectarWiFi();
   conectarMQTT();
-  Serial.println("AquaSense - Sensor de Temperatura iniciado");
+  Serial.println("AquaSense - Sensores iniciados");
 }
 
 void loop() {
@@ -58,23 +63,41 @@ void loop() {
   }
   mqtt.loop();
 
+  // DS18B20 - Temperatura da água
   sensors.requestTemperatures();
-  float temperatura = sensors.getTempCByIndex(0);
+  float tempAgua = sensors.getTempCByIndex(0);
 
-  Serial.print("Temperatura: ");
-  Serial.print(temperatura);
+  Serial.print("Temp. água: ");
+  Serial.print(tempAgua);
   Serial.println(" °C");
 
-  String payload = String(temperatura);
-  mqtt.publish("aquasense/temperatura", payload.c_str());
-  Serial.println("Dado enviado ao broker MQTT!");
+  mqtt.publish("aquasense/temperatura", String(tempAgua).c_str());
 
-  if (temperatura > 30.0){
-    Serial.println(" ALERTA: Temperatura ALTA!");
-  } else if (temperatura < 22.0) {
-    Serial.println(" ALERTA: Temperatura BAIXA!");
+  if (tempAgua > 30.0) {
+    Serial.println("ALERTA: Temperatura da água ALTA!");
+  } else if (tempAgua < 22.0) {
+    Serial.println("ALERTA: Temperatura da água BAIXA!");
   } else {
-    Serial.println("Temperatura NORMAL.");
+    Serial.println("Temperatura da água NORMAL.");
+  }
+
+  // DHT22 - Temperatura e umidade do ambiente
+  float tempAmbiente = dht.readTemperature();
+  float umidade = dht.readHumidity();
+
+  if (isnan(tempAmbiente) || isnan(umidade)) {
+    Serial.println("Erro ao ler DHT22!");
+  } else {
+    Serial.print("Temp. ambiente: ");
+    Serial.print(tempAmbiente);
+    Serial.println(" °C");
+
+    Serial.print("Umidade: ");
+    Serial.print(umidade);
+    Serial.println(" %");
+
+    mqtt.publish("aquasense/temperatura_ambiente", String(tempAmbiente).c_str());
+    mqtt.publish("aquasense/umidade", String(umidade).c_str());
   }
 
   delay(2000);
