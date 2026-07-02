@@ -43,3 +43,4 @@ ESP32-based IoT system for aquarium monitoring and automation.
 - **13/06/2026** — Node.js backend with MQTT subscriber and REST API; removed node_modules from repository; fixed .gitignore
 - **16/06/2026** — Frontend dashboard with real-time temperature display and Deep Blue Theme; updated fetch URL for local network access
 - **18/06/2026** — Physical DS18B20 sensor connected and tested; first real aquarium temperature reading (24.81°C) displayed on dashboard
+- **30/06/2026** — Migrated firmware to ESP32-S3 UNO board (S3-N16R8); added DHT22 sensor for ambient temperature and humidity monitoring; updated backend to subscribe and persist all three MQTT topics (temperatura, temperatura_ambiente, umidade) to InfluxDB; added Grafana panels for ambient temperature and humidity
