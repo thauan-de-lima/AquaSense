@@ -28,14 +28,21 @@
             letter-spacing: 2px;
         }
 
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
         .card {
             background-color: #103481;
             border: 1px solid #00d4ff33;
             border-radius: 16px;
             padding: 30px 40px;
             text-align: center;
-            width: 300px;
-            margin-bottom: 20px;
+            width: 260px;
         }
 
         .card-label {
@@ -44,6 +51,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 10px;
+            min-height: 40px;
         }
 
         .card-value {
@@ -52,18 +60,41 @@
             color: #00d4ff;
         }
 
+        .card-unit {
+            font-size: 1.2rem;
+            color: #00d4ff;
+        }
+
         .atualizacao {
             font-size: 0.8rem;
             color: #8899aa;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-     <h1>🐠 AquaSense</h1>
+    <h1>🐠 AquaSense</h1>
 
-    <div class="card">
-        <p class="card-label">Temperatura</p>
-        <p class="card-value"><span id="temperatura">--</span>°C</p>
+    <div class="cards">
+        <div class="card">
+            <p class="card-label">Temperatura da Água</p>
+            <p class="card-value"><span id="temperatura">--</span><span class="card-unit">°C</span></p>
+        </div>
+
+        <div class="card">
+            <p class="card-label">Temperatura Ambiente</p>
+            <p class="card-value"><span id="tempAmbiente">--</span><span class="card-unit">°C</span></p>
+        </div>
+
+        <div class="card">
+            <p class="card-label">Umidade</p>
+            <p class="card-value"><span id="umidade">--</span><span class="card-unit">%</span></p>
+        </div>
+
+        <div class="card">
+            <p class="card-label">Nível da Água</p>
+            <p class="card-value"><span id="nivel">--</span><span class="card-unit">cm</span></p>
+        </div>
     </div>
 
     <p class="atualizacao">Ultima atualizacao: <span id="atualizacao">--</span></p>
@@ -73,13 +104,16 @@
             fetch(`http://${window.location.hostname}:3000/api/dados`)
                 .then(response => response.json())
                 .then(dados => {
-                    document.getElementById('temperatura').innerHTML = dados.temperatura;
-                    document.getElementById('atualizacao').innerHTML = dados.ultimaAtualizacao;
+                    document.getElementById('temperatura').textContent = dados.temperatura;
+                    document.getElementById('tempAmbiente').textContent = dados.temperaturaAmbiente;
+                    document.getElementById('umidade').textContent = dados.umidade;
+                    document.getElementById('nivel').textContent = dados.nivel;
+                    document.getElementById('atualizacao').textContent = dados.ultimaAtualizacao;
                 });
         }
 
         buscarDados();
         setInterval(buscarDados, 2000);
-</script>
+    </script>
 </body>
 </html>
