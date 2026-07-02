@@ -10,12 +10,35 @@
 #define SENSOR_PIN 4
 #define DHT_PIN 5
 #define DHT_TYPE DHT22
+#define TRIG_PIN 6
+#define ECHO_PIN 7
 
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
 DHT dht(DHT_PIN, DHT_TYPE);
 WiFiClientSecure espClient;
 PubSubClient mqtt(espClient);
+
+// Altura do sensor até o fundo do aquário (em cm)
+// Ajuste esse valor depois de medir no seu aquário
+const float ALTURA_SENSOR = 30.0;
+
+float medirDistancia() {
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+
+  long duracao = pulseIn(ECHO_PIN, HIGH, 30000);
+
+  if (duracao == 0) {
+    return -1;
+  }
+
+  float distancia = (duracao * 0.0343) / 2.0;
+  return distancia;
+}
 
 void conectarWiFi() {
   Serial.print("Conectando ao Wi-Fi");
@@ -52,6 +75,8 @@ void setup() {
   Serial.begin(115200);
   sensors.begin();
   dht.begin();
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
   conectarWiFi();
   conectarMQTT();
   Serial.println("AquaSense - Sensores iniciados");
@@ -98,6 +123,31 @@ void loop() {
 
     mqtt.publish("aquasense/temperatura_ambiente", String(tempAmbiente).c_str());
     mqtt.publish("aquasense/umidade", String(umidade).c_str());
+  }
+
+  // HC-SR04 - Nível de água
+  float distancia = medirDistancia();
+
+  if (distancia < 0) {
+    Serial.println("Erro ao ler HC-SR04!");
+  } else {
+    float nivelAgua = ALTURA_SENSOR - distancia;
+
+    Serial.print("Distância: ");
+    Serial.print(distancia);
+    Serial.println(" cm");
+
+    Serial.print("Nível da água: ");
+    Serial.print(nivelAgua);
+    Serial.println(" cm");
+
+    mqtt.publish("aquasense/nivel", String(nivelAgua).c_str());
+
+    if (nivelAgua < 10.0) {
+      Serial.println("ALERTA: Nível de água BAIXO!");
+    } else {
+      Serial.println("Nível de água NORMAL.");
+    }
   }
 
   delay(2000);
