@@ -26,6 +26,7 @@ let dadosAquario = {
   temperatura: null,
   temperaturaAmbiente: null,
   umidade: null,
+  nivel: null,
   ultimaAtualizacao: null,
 };
 
@@ -34,6 +35,7 @@ mqttClient.on('connect', () => {
   mqttClient.subscribe('aquasense/temperatura');
   mqttClient.subscribe('aquasense/temperatura_ambiente');
   mqttClient.subscribe('aquasense/umidade');
+  mqttClient.subscribe('aquasense/nivel');
   console.log('Inscrito nos tópicos AquaSense');
 });
 
@@ -64,6 +66,14 @@ mqttClient.on('message', (topic, message) => {
     const point = new Point('umidade')
       .tag('sensor', 'dht22')
       .tag('local', 'ambiente')
+      .floatField('valor', valor);
+    writeApi.writePoint(point);
+
+  } else if (topic === 'aquasense/nivel') {
+    dadosAquario.nivel = valor;
+    const point = new Point('nivel')
+      .tag('sensor', 'hcsr04')
+      .tag('local', 'aquario')
       .floatField('valor', valor);
     writeApi.writePoint(point);
   }
