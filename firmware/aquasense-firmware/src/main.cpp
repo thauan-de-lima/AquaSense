@@ -12,6 +12,7 @@
 #define DHT_TYPE DHT22
 #define TRIG_PIN 6
 #define ECHO_PIN 7
+#define FLOW_PIN 13
 
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
@@ -22,6 +23,10 @@ PubSubClient mqtt(espClient);
 // Altura do sensor até o fundo do aquário (em cm)
 // Ajuste esse valor depois de medir no seu aquário
 const float ALTURA_SENSOR = 30.0;
+
+volatile unsigned long contadorPulsos = 0;
+unsigned long ultimoTempoFluxo = 0;
+float vazaoLmin = 0;
 
 float medirDistancia() {
   digitalWrite(TRIG_PIN, LOW);
@@ -38,6 +43,10 @@ float medirDistancia() {
 
   float distancia = (duracao * 0.0343) / 2.0;
   return distancia;
+}
+
+void IRAM_ATTR contarPulso() {
+  contadorPulsos++;
 }
 
 void conectarWiFi() {
@@ -77,6 +86,8 @@ void setup() {
   dht.begin();
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
+  pinMode(FLOW_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(FLOW_PIN), contarPulso, RISING);
   conectarWiFi();
   conectarMQTT();
   Serial.println("AquaSense - Sensores iniciados");
@@ -149,6 +160,28 @@ void loop() {
       Serial.println("Nível de água NORMAL.");
     }
   }
+
+// YF-S201 / ZJ-S201 - Vazão de água
+unsigned long agora = millis();
+
+if (agora - ultimoTempoFluxo >= 1000) {
+  noInterrupts();
+  unsigned long pulsos = contadorPulsos;
+  contadorPulsos = 0;
+  interrupts();
+
+  float segundosPassados = (agora - ultimoTempoFluxo) / 1000.0;
+  float frequencia = pulsos / segundosPassados;
+  vazaoLmin = frequencia / 7.5;
+
+  ultimoTempoFluxo = agora;
+
+  Serial.print("Vazão: ");
+  Serial.print(vazaoLmin);
+  Serial.println(" L/min");
+
+  mqtt.publish("aquasense/vazao", String(vazaoLmin).c_str());
+}
 
   delay(2000);
 }
