@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaSense — Atividade dos Sensores</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .status-list {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .status-row {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 130px;
+  }
+
+  .status-row-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    min-height: 48px;
+  }
+
+  .status-row-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    padding: 6px 16px;
+    border-radius: 999px;
+  }
+
+  .status-row-badge.online {
+    background-color: rgba(4, 69, 190, 0.63);
+    color: var(--status-ok);
+  }
+
+  .status-row-badge.offline {
+    background-color: rgba(40, 93, 155, 0.699);
+    color: var(--status-alert);
+  }
+
+  .status-row-badge .status-dot {
+    width: 9px;
+    height: 9px;
+  }
+
+  .status-row-badge.online .status-dot {
+    background-color: var(--status-ok);
+  }
+
+  .status-row-badge.offline .status-dot {
+    background-color: var(--status-alert);
+  }
+
+  @media (max-width: 700px) {
+    .status-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="header-left">
+    <div class="header-logo"><img src="icons/logo.png" alt="AquaSense" style="width: 85%; height: 85%; object-fit: contain; border-radius: 12px;"></div>
+    <span class="header-title">AquaSense</span>
+  </a>
+  <div class="status-badge online" id="statusBadge">
+    <span class="status-dot"></span>
+    <span id="statusText">Online</span>
+  </div>
+</header>
+
+<div class="topbar">
+  <div class="topbar-icons">
+<a href="ph.html" class="sidebar-icon" title="pH"><img src="icons/pH.png" alt="pH" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="co2.html" class="sidebar-icon" title="CO₂"><img src="icons/co2.png" alt="CO₂" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="temperatura-agua.html" class="sidebar-icon" title="Temperatura da Água"><img src="icons/TempWater.png" alt="Temperatura da Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="temperatura-ambiente.html" class="sidebar-icon" title="Temperatura do Ambiente"><img src="icons/tempAir.png" alt="Temperatura do Ambiente" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="umidade.html" class="sidebar-icon" title="Umidade"><img src="icons/Umidade.png" alt="Umidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="nivel.html" class="sidebar-icon" title="Nível da Água"><img src="icons/levelWater.png" alt="Nível de Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="tds.html" class="sidebar-icon" title="Sólidos Dissolvidos"><img src="icons/TDS.png" alt="Sólidos Dissolvidos" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="turbidez.html" class="sidebar-icon" title="Turbidez"><img src="icons/turbidez.png" alt="Turbidez" style="width: 85%; height: 85%; object-fit: contain"></a>
+    <a href="luminosidade.html" class="sidebar-icon" title="Luminosidade"><img src="icons/Luminosidade.png" alt="Luminosidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+    <span id="resumo" style="color: var(--text-muted); font-weight: 700;">Carregando...</span>
+    <nav class="nav-tabs" style="padding: 0;">
+      <a href="index.html" class="nav-tab">Menu Principal</a>
+      <a href="atividade.html" class="nav-tab active">Atividade dos sensores</a>
+      <a href="sobre.html" class="nav-tab">Sobre o projeto</a>
+    </nav>
+  </div>
+</div>
+
+<div class="content">
+  <main class="status-list">
+    <div id="listaStatus" style="display: contents;"></div>
+  </main>
+</div>
+
+<script>
+  function buscarStatus() {
+    fetch(`http://${window.location.hostname}:3000/api/status`)
+      .then(response => response.json())
+      .then(dados => {
+        const lista = document.getElementById('listaStatus');
+        lista.innerHTML = '';
+
+        let total = 0;
+        let online = 0;
+
+        for (const chave in dados) {
+          const sensor = dados[chave];
+          total++;
+          if (sensor.online) online++;
+
+          const row = document.createElement('div');
+          row.className = 'status-row';
+
+          row.innerHTML = `
+            <span class="status-row-label">${sensor.descricao}</span>
+            <span class="status-row-badge ${sensor.online ? 'online' : 'offline'}">
+              <span class="status-dot"></span>
+              ${sensor.online ? 'Online' : 'Offline'}
+            </span>
+          `;
+
+          lista.appendChild(row);
+        }
+
+        document.getElementById('resumo').textContent = `${online} de ${total} sensores online`;
+
+        document.getElementById('statusBadge').classList.remove('offline');
+        document.getElementById('statusBadge').classList.add('online');
+        document.getElementById('statusText').textContent = 'Online';
+      })
+      .catch(() => {
+        document.getElementById('resumo').textContent = 'Backend offline';
+        document.getElementById('statusBadge').classList.remove('online');
+        document.getElementById('statusBadge').classList.add('offline');
+        document.getElementById('statusText').textContent = 'Offline';
+      });
+  }
+
+  buscarStatus();
+  setInterval(buscarStatus, 5000);
+</script>
+
+</body>
+</html>

@@ -1,119 +1,322 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AquaSense Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaSense — Dashboard</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .card-delta {
+    font-size: 0.85rem;
+    font-weight: 800;
+    min-height: 18px;
+  }
+  .card-delta.up { color: #0B5D2E; }
+  .card-delta.down { color: #8A1F0C; }
+  .card-delta.same { color: var(--text-dark); opacity: 0.5; }
 
-        body {
-            background-color: #0a1628;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
+  .card-main-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    gap: 12px;
+  }
 
-        h1 {
-            font-size: 2rem;
-            color: #00d4ff;
-            margin-bottom: 40px;
-            letter-spacing: 2px;
-        }
+  .card-value-col {
+    display: flex;
+    flex-direction: column;
+  }
 
-        .cards {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
+  .card-status-wrap {
+    display: flex;
+    align-items: center;
+  }
 
-        .card {
-            background-color: #103481;
-            border: 1px solid #00d4ff33;
-            border-radius: 16px;
-            padding: 30px 40px;
-            text-align: center;
-            width: 260px;
-        }
-
-        .card-label {
-            font-size: 0.9rem;
-            color: #8899aa;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            min-height: 40px;
-        }
-
-        .card-value {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #00d4ff;
-        }
-
-        .card-unit {
-            font-size: 1.2rem;
-            color: #00d4ff;
-        }
-
-        .atualizacao {
-            font-size: 0.8rem;
-            color: #8899aa;
-            margin-top: 10px;
-        }
-    </style>
+  .card-status {
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 10px 20px;
+    border-radius: 999px;
+    display: inline-block;
+    width: fit-content;
+    white-space: nowrap;
+  }
+  .card-status.excelente { background-color: #042288; color: #FFFFFF; }
+  .card-status.bom       { background-color: #05af13; color: #FFFFFF; }
+  .card-status.atencao   { background-color: #B8860B; color: #FFFFFF; }
+  .card-status.ruim      { background-color: #8a0c0ce0; color: #FFFFFF; }
+</style>
 </head>
 <body>
-    <h1>🐠 AquaSense</h1>
 
-    <div class="cards">
-        <div class="card">
-            <p class="card-label">Temperatura da Água</p>
-            <p class="card-value"><span id="temperatura">--</span><span class="card-unit">°C</span></p>
+<header class="header">
+  <a href="index.html" class="header-left">
+    <div class="header-logo"><img src="icons/logo.png" alt="AquaSense" style="width: 85%; height: 85%; object-fit: contain; border-radius: 12px;"></div>
+    <span class="header-title">AquaSense</span>
+  </a>
+  <div class="status-badge online" id="statusBadge">
+    <span class="status-dot"></span>
+    <span id="statusText">Online</span>
+  </div>
+</header>
+
+<div class="topbar">
+  <div class="topbar-icons">
+    <a href="ph.html" class="sidebar-icon" title="pH"><img src="icons/pH.png" alt="pH" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="co2.html" class="sidebar-icon" title="CO₂"><img src="icons/co2.png" alt="CO₂" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="temperatura-agua.html" class="sidebar-icon" title="Temperatura da Água"><img src="icons/TempWater.png" alt="Temperatura da Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="temperatura-ambiente.html" class="sidebar-icon" title="Temperatura do Ambiente"><img src="icons/tempAir.png" alt="Temperatura do Ambiente" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="umidade.html" class="sidebar-icon" title="Umidade"><img src="icons/Umidade.png" alt="Umidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="nivel.html" class="sidebar-icon" title="Nível da Água"><img src="icons/levelWater.png" alt="Nível de Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="tds.html" class="sidebar-icon" title="Sólidos Dissolvidos"><img src="icons/TDS.png" alt="Sólidos Dissolvidos" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="turbidez.html" class="sidebar-icon" title="Turbidez"><img src="icons/turbidez.png" alt="Turbidez" style="width: 85%; height: 85%; object-fit: contain"></a>
+    <a href="luminosidade.html" class="sidebar-icon" title="Luminosidade"><img src="icons/Luminosidade.png" alt="Luminosidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
+  </div>
+
+  <nav class="nav-tabs" style="padding: 0;">
+    <a href="index.html" class="nav-tab active">Menu Principal</a>
+    <a href="atividade.html" class="nav-tab">Atividade dos sensores</a>
+    <a href="sobre.html" class="nav-tab">Sobre o projeto</a>
+  </nav>
+</div>
+
+<div class="content">
+  <main class="grid">
+
+    <a href="ph.html" class="card empty">
+      <div class="card-label">pH da Água</div>
+      <div><span class="card-value">pH<span id="ph">--</span></span></div>
+      <div class="card-delta" id="delta-ph"></div>
+      <div class="card-updated">Última atualização: <span id="ph-updated">--:--:--</span></div>
+    </a>
+
+    <a href="temperatura-agua.html" class="card">
+      <div class="card-label">Temperatura da Água</div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="temperatura">--</span><span class="card-unit">°C</span></div>
+          <div class="card-delta" id="delta-temperatura"></div>
         </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-temperatura"></span></div>
+      </div>
+      <div class="card-updated">Última atualização: <span id="temperatura-updated">--:--:--</span></div>
+    </a>
 
-        <div class="card">
-            <p class="card-label">Temperatura Ambiente</p>
-            <p class="card-value"><span id="tempAmbiente">--</span><span class="card-unit">°C</span></p>
+    <a href="temperatura-ambiente.html" class="card">
+      <div class="card-label">Temperatura do Ambiente</div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="tempAmbiente">--</span><span class="card-unit">°C</span></div>
+          <div class="card-delta" id="delta-tempAmbiente"></div>
         </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-tempAmbiente"></span></div>
+      </div>
+      <div class="card-updated">Última atualização: <span id="tempAmbiente-updated">--:--:--</span></div>
+    </a>
 
-        <div class="card">
-            <p class="card-label">Umidade</p>
-            <p class="card-value"><span id="umidade">--</span><span class="card-unit">%</span></p>
+    <a href="co2.html" class="card empty">
+      <div class="card-label">CO₂</div>
+      <div><span class="card-value" id="co2">--</span><span class="card-unit">ppm</span></div>
+      <div class="card-delta" id="delta-co2"></div>
+      <div class="card-updated">Última atualização: <span id="co2-updated">--:--:--</span></div>
+    </a>
+
+    <a href="nivel.html" class="card">
+      <div class="card-label">Nível da Água</div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="nivel">--</span><span class="card-unit">cm</span></div>
+          <div class="card-delta" id="delta-nivel"></div>
         </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-nivel"></span></div>
+      </div>
+      <div class="card-updated">Última atualização: <span id="nivel-updated">--:--:--</span></div>
+    </a>
 
-        <div class="card">
-            <p class="card-label">Nível da Água</p>
-            <p class="card-value"><span id="nivel">--</span><span class="card-unit">cm</span></p>
+    <a href="umidade.html" class="card">
+      <div class="card-label">Umidade do Ambiente</div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="umidade">--</span><span class="card-unit">%</span></div>
+          <div class="card-delta" id="delta-umidade"></div>
         </div>
-    </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-umidade"></span></div>
+      </div>
+      <div class="card-updated">Última atualização: <span id="umidade-updated">--:--:--</span></div>
+    </a>
 
-    <p class="atualizacao">Ultima atualizacao: <span id="atualizacao">--</span></p>
+    <a href="turbidez.html" class="card empty">
+      <div class="card-label">Turbidez</div>
+      <div><span class="card-value" id="turbidez">--</span></div>
+      <div class="card-delta" id="delta-turbidez"></div>
+      <div class="card-updated">Última atualização: <span id="turbidez-updated">--:--:--</span></div>
+    </a>
 
-    <script>
-        function buscarDados() {
-            fetch(`http://${window.location.hostname}:3000/api/dados`)
-                .then(response => response.json())
-                .then(dados => {
-                    document.getElementById('temperatura').textContent = dados.temperatura;
-                    document.getElementById('tempAmbiente').textContent = dados.temperaturaAmbiente;
-                    document.getElementById('umidade').textContent = dados.umidade;
-                    document.getElementById('nivel').textContent = dados.nivel;
-                    document.getElementById('atualizacao').textContent = dados.ultimaAtualizacao;
-                });
-        }
+    <a href="luminosidade.html" class="card empty">
+      <div class="card-label">Luminosidade</div>
+      <div><span class="card-value" id="luminosidade">----</span><span class="card-unit">lux</span></div>
+      <div class="card-delta" id="delta-luminosidade"></div>
+      <div class="card-updated">Última atualização: <span id="luminosidade-updated">--:--:--</span></div>
+    </a>
 
-        buscarDados();
-        setInterval(buscarDados, 2000);
-    </script>
+    <a href="tds.html" class="card empty">
+      <div class="card-label">Sólidos Dissolvidos</div>
+      <div><span class="card-value" id="tds">--</span><span class="card-unit">ppm</span></div>
+      <div class="card-delta" id="delta-tds"></div>
+      <div class="card-updated">Última atualização: <span id="tds-updated">--:--:--</span></div>
+    </a>
+
+    <a href="vazao.html" class="card" id="card-vazao">
+      <div class="card-label">Vazão de Água</div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="vazao">--</span><span class="card-unit">L/min</span></div>
+          <div class="card-delta" id="delta-vazao"></div>
+        </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-vazao"></span></div>
+      </div>
+      <div class="card-updated">Última atualização: <span id="vazao-updated">--:--:--</span></div>
+    </a>
+
+  </main>
+</div>
+
+<script>
+  // ===== Faixas de classificação, baseadas nas espécies do seu aquário =====
+  // (neon, acará bandeira, mato grosso, rodostomus, corydoras, lagosta filtradora)
+  const faixas = {
+    temperatura: {
+      excelente: [24, 27],
+      bom: [[22, 24], [27, 29]],
+      atencao: [[20, 22], [29, 31]],
+    },
+    tempAmbiente: {
+      excelente: [20, 26],
+      bom: [[18, 20], [26, 30]],
+      atencao: [[15, 18], [30, 33]],
+    },
+    umidade: {
+      excelente: [40, 60],
+      bom: [[30, 40], [60, 70]],
+      atencao: [[20, 30], [70, 80]],
+    },
+    nivel: {
+      excelente: [35, 40],
+      bom: [[25, 35], [35, 40]],
+      atencao: [[15, 25]],
+    },
+    vazao: {
+      excelente: [8, 13],
+      bom: [[5, 8], [13, 18]],
+      atencao: [[2, 5], [18, 25]],
+    },
+  };
+
+  function dentroDe(valor, intervalo) {
+    return valor >= intervalo[0] && valor <= intervalo[1];
+  }
+
+  function classificar(sensor, valor) {
+    const f = faixas[sensor];
+    if (!f || valor === null || valor === undefined || isNaN(valor)) return null;
+
+    if (dentroDe(valor, f.excelente)) return { texto: 'Excelente', classe: 'excelente' };
+    if (f.bom.some(intervalo => dentroDe(valor, intervalo))) return { texto: 'Bom', classe: 'bom' };
+    if (f.atencao.some(intervalo => dentroDe(valor, intervalo))) return { texto: 'Atenção', classe: 'atencao' };
+    return { texto: 'Ruim', classe: 'ruim' };
+  }
+
+  function atualizarStatus(sensor, valor) {
+    const el = document.getElementById(`status-${sensor}`);
+    if (!el) return;
+    const resultado = classificar(sensor, valor);
+    if (!resultado) return;
+    el.textContent = resultado.texto;
+    el.className = `card-status ${resultado.classe}`;
+  }
+
+  // Guarda o valor da leitura anterior de cada sensor, para calcular o delta
+  let valorAnterior = {};
+
+  function atualizarDelta(sensor, valor, unidade) {
+    const deltaEl = document.getElementById(`delta-${sensor}`);
+    if (!deltaEl || valor === null || valor === undefined) return;
+
+    if (valorAnterior[sensor] !== undefined && valorAnterior[sensor] !== null) {
+      const diff = +(valor - valorAnterior[sensor]).toFixed(2);
+      if (diff > 0) {
+        deltaEl.textContent = `▲ +${diff}${unidade}`;
+        deltaEl.className = 'card-delta up';
+      } else if (diff < 0) {
+        deltaEl.textContent = `▼ ${diff}${unidade}`;
+        deltaEl.className = 'card-delta down';
+      } else {
+        deltaEl.textContent = `— sem variação`;
+        deltaEl.className = 'card-delta same';
+      }
+    }
+    valorAnterior[sensor] = valor;
+  }
+
+  function formatarHora(isoString) {
+    if (!isoString) return "--:--:--";
+    const data = new Date(isoString);
+    return data.toLocaleTimeString('pt-BR');
+  }
+
+  function buscarDados() {
+    fetch(`http://${window.location.hostname}:3000/api/dados`)
+      .then(response => response.json())
+      .then(dados => {
+        const hora = formatarHora(dados.ultimaAtualizacao);
+
+        document.getElementById('temperatura').textContent = dados.temperatura ?? '--';
+        document.getElementById('temperatura-updated').textContent = hora;
+        atualizarDelta('temperatura', dados.temperatura, '°C');
+        atualizarStatus('temperatura', dados.temperatura);
+
+        document.getElementById('tempAmbiente').textContent = dados.temperaturaAmbiente ?? '--';
+        document.getElementById('tempAmbiente-updated').textContent = hora;
+        atualizarDelta('tempAmbiente', dados.temperaturaAmbiente, '°C');
+        atualizarStatus('tempAmbiente', dados.temperaturaAmbiente);
+
+        document.getElementById('umidade').textContent = dados.umidade ?? '--';
+        document.getElementById('umidade-updated').textContent = hora;
+        atualizarDelta('umidade', dados.umidade, '%');
+        atualizarStatus('umidade', dados.umidade);
+
+        document.getElementById('nivel').textContent = dados.nivel ?? '--';
+        document.getElementById('nivel-updated').textContent = hora;
+        atualizarDelta('nivel', dados.nivel, 'cm');
+        atualizarStatus('nivel', dados.nivel);
+
+        document.getElementById('vazao').textContent = dados.vazao ?? '--';
+        document.getElementById('vazao-updated').textContent = hora;
+        atualizarDelta('vazao', dados.vazao, 'L/min');
+        atualizarStatus('vazao', dados.vazao);
+
+        // Sensores ainda não integrados no backend: mantém "--"
+        // Quando pH, TDS, turbidez, luminosidade, vazão e CO2 forem integrados,
+        // basta adicionar as linhas correspondentes aqui, seguindo o mesmo padrão.
+
+        document.getElementById('statusBadge').classList.remove('offline');
+        document.getElementById('statusBadge').classList.add('online');
+        document.getElementById('statusText').textContent = 'Online';
+      })
+      .catch(() => {
+        document.getElementById('statusBadge').classList.remove('online');
+        document.getElementById('statusBadge').classList.add('offline');
+        document.getElementById('statusText').textContent = 'Offline';
+      });
+  }
+
+  buscarDados();
+  setInterval(buscarDados, 4000); // atualiza a cada 10 segundos
+</script>
+
 </body>
 </html>

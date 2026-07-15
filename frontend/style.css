@@ -1,0 +1,257 @@
+/* ===== AquaSense — Design System ===== */
+/* Paleta definida no Figma:
+   #001F38 - fundo principal
+   #024277 - fundo secundário (não usado nos cards agora, disponível p/ variações)
+   #1295FF - destaque / cards
+   #003338 - fundo alternativo
+   #005056 - bordas / sidebar
+   #039CA7 - status normal / online
+*/
+
+:root {
+  --bg-main: #001F38;
+  --bg-secondary: #003968;
+  --accent: #1295FF;
+  --bg-alt: #003338;
+  --border: #005056;
+  --status-ok: #14e1f0;
+  --status-alert: #f70b0b;
+  --text-light: #FFFFFF;
+  --text-dark: #001F38;
+  --text-muted: #8FAFC2;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@keyframes gradienteFluido {
+  0%   { background-position: 15% 5%; }
+  13%  { background-position: 70% 15%; }
+  27%  { background-position: 90% 55%; }
+  38%  { background-position: 55% 40%; }
+  52%  { background-position: 25% 80%; }
+  64%  { background-position: 65% 90%; }
+  78%  { background-position: 85% 25%; }
+  91%  { background-position: 35% 60%; }
+  100% { background-position: 15% 5%; }
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #001325, #001F38, #170B33, #003338, #005056, #003338, #1e0b4b, #001325);
+  background-size: 400% 400%;
+  animation: gradienteFluido 65s ease-in-out infinite;
+  color: var(--text-light);
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-secondary);
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.header-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.header-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-main);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--status-ok);
+}
+
+.status-badge.online { color: var(--status-ok); }
+.status-badge.offline .status-dot { background-color: var(--status-alert); }
+.status-badge.offline { color: var(--status-alert); }
+
+/* ===== Nav Tabs ===== */
+.nav-tabs {
+  display: flex;
+  gap: 12px;
+  padding: 16px 32px 0 32px;
+}
+
+.nav-tab {
+  background-color: var(--bg-secondary);
+  color: var(--text-light);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.2s ease;
+}
+
+.nav-tab:hover {
+  background-color: var(--border);
+}
+
+.nav-tab.active {
+  background-color: var(--accent);
+  color: var(--text-dark);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 32px 0 32px;
+}
+
+.topbar-icons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.content {
+  padding: 24px 32px 40px 32px;
+}
+
+.sidebar-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  text-decoration: none;
+  color: var(--accent);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.sidebar-icon:hover {
+  background-color: var(--border);
+  transform: translateY(-2px);
+}
+
+/* ===== Cards grid ===== */
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--accent);
+  border-radius: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: var(--text-dark);
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.card-label {
+  font-size: 1rem;
+  font-weight: 800;
+  min-height: 36px;
+}
+
+.card-value {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 12px 0;
+}
+
+.card-unit {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.card-updated {
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0.75;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.card-status-wrap {
+  display: flex;
+  align-items: center;
+}
+
+/* Empty state (sensor not yet integrated) */
+.card.empty {
+  opacity: 0.55;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .header-title {
+    font-size: 1.3rem;
+  }
+}
