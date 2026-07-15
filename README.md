@@ -31,7 +31,7 @@ ESP32-based IoT system for aquarium monitoring and automation.
 
 ## 📊 Dashboard
 
-![Dashboard AquaSense](docs/Aquariumfrontend.png)
+![Dashboard AquaSense](docs/image.png)
 ![Graphic AquaSense](docs/AquariumGraphic.png) 
 
 ## 👨‍💻 Author
@@ -45,3 +45,7 @@ ESP32-based IoT system for aquarium monitoring and automation.
 - **18/06/2026** — Physical DS18B20 sensor connected and tested; first real aquarium temperature reading (24.81°C) displayed on dashboard
 - **30/06/2026** — Migrated firmware to ESP32-S3 UNO board (S3-N16R8); added DHT22 sensor for ambient temperature and humidity monitoring; updated backend to subscribe and persist all three MQTT topics (temperatura, temperatura_ambiente, umidade) to InfluxDB; added Grafana panels for ambient temperature and humidity
 - **02/07/2026** — Added HC-SR04 ultrasonic sensor for water level monitoring with voltage divider circuit; updated backend and frontend to display water temperature, ambient temperature, humidity, and water level in real-time
+- **10/07/2026** — Redesigned frontend dashboard with new visual identity (Figma mockup, color palette, Nunito typeface); added animated gradient background; implemented health status classification (Excelente/Bom/Atenção/Ruim) per sensor based on aquarium species requirements; added delta indicators showing variation since last reading
+- **13/07/2026** — Added custom icons for main logo and sensor navigation tabs; reorganized dashboard cards layout; restructured project folder to separate image assets into dedicated icons/ directory
+- **14/07/2026** — Programmed water flow sensor (ZJ-S201) firmware using interrupt-based pulse counting; implemented voltage divider circuit for safe 5V-to-3.3V signal conversion; calculated flow rate using manufacturer's K-factor
+- **15/07/2026** — Integrated water flow sensor into backend (MQTT subscription, InfluxDB persistence, status API) and frontend (dashboard card with real-time value, delta, and health classification); calibrated pump flow rate against recommended aquarium filtration standards
