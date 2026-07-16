@@ -168,10 +168,15 @@
       <div class="card-updated">Última atualização: <span id="luminosidade-updated">--:--:--</span></div>
     </a>
 
-    <a href="tds.html" class="card empty">
+    <a href="tds.html" class="card" id="card-tds">
       <div class="card-label">Sólidos Dissolvidos</div>
-      <div><span class="card-value" id="tds">--</span><span class="card-unit">ppm</span></div>
-      <div class="card-delta" id="delta-tds"></div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="tds">--</span><span class="card-unit">ppm</span></div>
+          <div class="card-delta" id="delta-tds"></div>
+        </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-tds"></span></div>
+      </div>
       <div class="card-updated">Última atualização: <span id="tds-updated">--:--:--</span></div>
     </a>
 
@@ -223,6 +228,11 @@
       excelente: [1600, 3000],
       bom: [[800, 1600], [3000, 4000]],
       atencao: [[300, 800], [4000, 6000]],
+    },
+    tds: {
+      excelente: [100, 250],
+      bom: [[50, 100], [250, 350]],
+      atencao: [[20, 50], [350, 500]],
     },
   };
 
@@ -313,6 +323,10 @@
         document.getElementById('luminosidade-updated').textContent = hora;
         atualizarDelta('luminosidade', dados.luminosidade, ' lux');
         atualizarStatus('luminosidade', dados.luminosidade);
+        document.getElementById('tds').textContent = dados.tds ?? '--';
+        document.getElementById('tds-updated').textContent = hora;
+        atualizarDelta('tds', dados.tds, ' ppm');
+        atualizarStatus('tds', dados.tds);
 
         // Sensores ainda não integrados no backend: mantém "--"
         // Quando pH, TDS, turbidez, luminosidade, vazão e CO2 forem integrados,
