@@ -31,6 +31,7 @@ let dadosAquario = {
   umidade: null,
   nivel: null,
   vazao: null,
+  luminosidade: null,
   ultimaAtualizacao: null,
 };
 
@@ -67,6 +68,7 @@ mqttClient.on('connect', () => {
   mqttClient.subscribe('aquasense/umidade');
   mqttClient.subscribe('aquasense/nivel');
   mqttClient.subscribe('aquasense/vazao');
+  mqttClient.subscribe('aquasense/luminosidade');
   console.log('Inscrito nos tópicos AquaSense');
 });
 
@@ -118,6 +120,15 @@ mqttClient.on('message', (topic, message) => {
     ultimaLeitura.vazao = agora.getTime();
     const point = new Point('vazao')
       .tag('sensor', 'zjs201')
+      .tag('local', 'aquario')
+      .floatField('valor', valor);
+    writeApi.writePoint(point);
+  }
+  else if (topic === 'aquasense/luminosidade') {
+    dadosAquario.luminosidade = valor;
+    ultimaLeitura.luminosidade = agora.getTime();
+    const point = new Point('luminosidade')
+      .tag('sensor', 'bh1750')
       .tag('local', 'aquario')
       .floatField('valor', valor);
     writeApi.writePoint(point);

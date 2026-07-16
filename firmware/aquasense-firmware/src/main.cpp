@@ -5,6 +5,8 @@
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <DHT.h>
+#include <Wire.h>
+#include <BH1750.h>
 #include "credentials.h"
 
 #define SENSOR_PIN 4
@@ -17,6 +19,7 @@
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
 DHT dht(DHT_PIN, DHT_TYPE);
+BH1750 luxMeter;
 WiFiClientSecure espClient;
 PubSubClient mqtt(espClient);
 
@@ -84,6 +87,8 @@ void setup() {
   Serial.begin(115200);
   sensors.begin();
   dht.begin();
+  Wire.begin(8, 9);
+  luxMeter.begin();
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
   pinMode(FLOW_PIN, INPUT_PULLUP);
@@ -181,6 +186,18 @@ if (agora - ultimoTempoFluxo >= 1000) {
   Serial.println(" L/min");
 
   mqtt.publish("aquasense/vazao", String(vazaoLmin).c_str());
+}
+// BH1750 - Luminosidade
+float lux = luxMeter.readLightLevel();
+
+if (lux < 0) {
+  Serial.println("Erro ao ler BH1750!");
+} else {
+  Serial.print("Luminosidade: ");
+  Serial.print(lux);
+  Serial.println(" lux");
+
+  mqtt.publish("aquasense/luminosidade", String(lux).c_str());
 }
 
   delay(2000);
