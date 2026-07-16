@@ -15,6 +15,7 @@
 #define TRIG_PIN 6
 #define ECHO_PIN 7
 #define FLOW_PIN 13
+#define TDS_PIN 10
 
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
@@ -26,6 +27,10 @@ PubSubClient mqtt(espClient);
 // Altura do sensor até o fundo do aquário (em cm)
 // Ajuste esse valor depois de medir no seu aquário
 const float ALTURA_SENSOR = 30.0;
+
+const float VREF = 3.3;
+const int ADC_RESOLUTION = 4096;
+
 
 volatile unsigned long contadorPulsos = 0;
 unsigned long ultimoTempoFluxo = 0;
@@ -50,6 +55,19 @@ float medirDistancia() {
 
 void IRAM_ATTR contarPulso() {
   contadorPulsos++;
+}
+float lerTDS(float temperaturaAgua) {
+  int leituraBruta = analogRead(TDS_PIN);
+  float tensao = leituraBruta / (float)ADC_RESOLUTION * VREF;
+
+  float coeficienteCompensacao = 1.0 + 0.02 * (temperaturaAgua - 25.0);
+  float tensaoCompensada = tensao / coeficienteCompensacao;
+
+  float tds = (133.42 * pow(tensaoCompensada, 3)
+             - 255.86 * pow(tensaoCompensada, 2)
+             + 857.39 * tensaoCompensada) * 0.5;
+
+  return tds;
 }
 
 void conectarWiFi() {
@@ -198,6 +216,18 @@ if (lux < 0) {
   Serial.println(" lux");
 
   mqtt.publish("aquasense/luminosidade", String(lux).c_str());
+}
+// TDS Board - Sólidos Dissolvidos
+float tds = lerTDS(tempAgua);
+
+if (tds < 0) {
+  Serial.println("Erro ao ler TDS!");
+} else {
+  Serial.print("TDS: ");
+  Serial.print(tds);
+  Serial.println(" ppm");
+
+  mqtt.publish("aquasense/tds", String(tds).c_str());
 }
 
   delay(2000);
