@@ -14,7 +14,10 @@ const influxClient = new InfluxDB({
   url: process.env.INFLUX_URL,
   token: process.env.INFLUX_TOKEN,
 });
+// WriteApi
 const writeApi = influxClient.getWriteApi(process.env.INFLUX_ORG, process.env.INFLUX_BUCKET);
+//QueryApi
+const queryApi = influxClient.getQueryApi(process.env.INFLUX_ORG);
 
 // Conexão MQTT
 const mqttClient = mqtt.connect(`mqtts://${process.env.MQTT_HOST}:${process.env.MQTT_PORT}`, {
@@ -33,6 +36,7 @@ let dadosAquario = {
   vazao: null,
   luminosidade: null,
   tds: null,
+  turbidez: null,
   ultimaAtualizacao: null,
 };
 
@@ -71,6 +75,7 @@ mqttClient.on('connect', () => {
   mqttClient.subscribe('aquasense/vazao');
   mqttClient.subscribe('aquasense/luminosidade');
   mqttClient.subscribe('aquasense/tds');
+  mqttClient.subscribe('aquasense/turbidez')
   console.log('Inscrito nos tópicos AquaSense');
 });
 
@@ -144,6 +149,15 @@ mqttClient.on('message', (topic, message) => {
       .floatField('valor', valor);
     writeApi.writePoint(point);
   }
+  else if (topic === 'aquasense/turbidez') {
+    dadosAquario.turbidez = valor;
+    ultimaLeitura.turbidez = agora.getTime();
+    const point = new Point('turbidez')
+      .tag('sensor', 'turbidity-sensor-v1')
+      .tag('local', 'aquario')
+      .floatField('valor', valor);
+    writeApi.writePoint(point);
+  }
 
   writeApi.flush().catch(err => console.error('Erro ao salvar no InfluxDB:', err));
 });
@@ -168,6 +182,53 @@ app.get('/api/status', (req, res) => {
   }
 
   res.json(status);
+});
+
+const INTERVALOS_VALIDOS = {
+  '1h':  { range: '-1h',  every: '1m' },
+  '24h': { range: '-24h', every: '5m' },
+  '7d':  { range: '-7d',  every: '30m' },
+};
+
+const SENSORES_VALIDOS = [
+  'temperatura', 'temperatura_ambiente', 'umidade', 'nivel',
+  'vazao', 'luminosidade', 'tds', 'turbidez', 'ph'
+];
+
+app.get('/api/historico/:sensor', async (req, res) => {
+  const { sensor } = req.params;
+  const intervaloParam = req.query.intervalo || '24h';
+
+  if (!SENSORES_VALIDOS.includes(sensor)) {
+    return res.status(400).json({ erro: 'Sensor inválido' });
+  }
+
+  const config = INTERVALOS_VALIDOS[intervaloParam];
+  if (!config) {
+    return res.status(400).json({ erro: 'Intervalo inválido' });
+  }
+
+  const fluxQuery = `
+    from(bucket: "${process.env.INFLUX_BUCKET}")
+      |> range(start: ${config.range})
+      |> filter(fn: (r) => r._measurement == "${sensor}")
+      |> aggregateWindow(every: ${config.every}, fn: mean, createEmpty: false)
+  `;
+
+  try {
+    const resultado = [];
+    for await (const { values, tableMeta } of queryApi.iterateRows(fluxQuery)) {
+      const linha = tableMeta.toObject(values);
+      resultado.push({
+        tempo: linha._time,
+        valor: linha._value,
+      });
+    }
+    res.json(resultado);
+  } catch (erro) {
+    console.error('Erro ao consultar histórico:', erro);
+    res.status(500).json({ erro: 'Erro ao consultar dados' });
+  }
 });
 
 app.get('/', (req, res) => {
