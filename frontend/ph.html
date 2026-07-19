@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaSense — PH</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+
+  .peixe-mascote {
+    display: flex;
+    align-items: center;
+    animation: nadar 3s ease-in-out infinite;
+  }
+
+  @keyframes nadar {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-6px) rotate(-2deg); }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <a href="index.html" class="header-left">
+    <div class="header-logo"><img src="icons/logo.png" alt="AquaSense" style="width: 85%; height: 85%; object-fit: contain; border-radius: 12px;"></div>
+    <span class="header-title">AquaSense</span>
+  </a>
+  <div class="status-badge online" id="statusBadge">
+    <span class="status-dot"></span>
+    <span id="statusText">Online</span>
+  </div>
+</header>
+
+<div class="topbar">
+  <div class="topbar-icons">
+    <a href="ph.html" class="sidebar-icon" title="pH"><img src="icons/pH.png" alt="pH" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="temperatura-agua.html" class="sidebar-icon" title="Temperatura da Água"><img src="icons/TempWater.png" alt="Temperatura da Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="temperatura-ambiente.html" class="sidebar-icon" title="Temperatura do Ambiente"><img src="icons/tempAir.png" alt="Temperatura do Ambiente" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="umidade.html" class="sidebar-icon" title="Umidade"><img src="icons/Umidade.png" alt="Umidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="nivel.html" class="sidebar-icon" title="Nível da Água"><img src="icons/levelWater.png" alt="Nível de Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="tds.html" class="sidebar-icon" title="Sólidos Dissolvidos"><img src="icons/TDS.png" alt="Sólidos Dissolvidos" style="width: 75%; height: 75%; object-fit: contain;"></a>
+    <a href="turbidez.html" class="sidebar-icon" title="Turbidez"><img src="icons/turbidez.png" alt="Turbidez" style="width: 85%; height: 85%; object-fit: contain"></a>
+    <a href="luminosidade.html" class="sidebar-icon" title="Luminosidade"><img src="icons/Luminosidade.png" alt="Luminosidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
+  </div>
+
+  <nav class="nav-tabs" style="padding: 0;">
+    <a href="index.html" class="nav-tab">Menu Principal</a>
+    <a href="atividade.html" class="nav-tab">Atividade dos sensores</a>
+    <a href="sobre.html" class="nav-tab">Sobre o projeto</a>
+  </nav>
+</div>
+
+<div class="content">
+
+  <div class="detalhe-topo">
+    <div>
+      <div class="card-label" style="font-size: 1.3rem;">pH (Potencial Hidrogeniônico)</div>
+      <div class="valor-atual-box">
+        <span class="card-value" id="valorAtual">--</span>
+        <span class="card-unit"></span>
+        <span class="card-status" id="statusAtual"></span>
+      </div>
+      <div class="card-updated">Última atualização: <span id="ultimaAtualizacao">--:--:--</span></div>
+    </div>
+
+    <div class="peixe-mascote">
+      <svg viewBox="0 0 220 220" width="190" height="190">
+        <defs>
+          <linearGradient id="corpoPerola" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="55%" stop-color="#EDF4F9"/>
+            <stop offset="100%" stop-color="#CBDCE8"/>
+          </linearGradient>
+          <linearGradient id="nadadeiraPerola" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F4FAFF"/>
+            <stop offset="100%" stop-color="#B9CFDE"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Cauda: base bem dentro do corpo (até x=80, corpo começa em x=42) -->
+        <path d="M 80 92 Q 40 75 12 65 Q 2 112 12 158 Q 40 148 80 132 Z" fill="url(#nadadeiraPerola)" opacity="0.9"/>
+
+        <!-- Nadadeira dorsal: base bem dentro do topo do corpo -->
+        <path d="M 95 78 Q 65 25 38 4 Q 78 12 112 62 Q 104 72 95 78 Z" fill="url(#nadadeiraPerola)"/>
+
+        <!-- Nadadeira anal: espelhada, base bem dentro da parte inferior -->
+        <path d="M 95 148 Q 65 202 38 224 Q 78 216 112 166 Q 104 156 95 148 Z" fill="url(#nadadeiraPerola)"/>
+
+        <!-- Filamentos ventrais, nascendo de dentro do corpo -->
+        <path d="M 118 158 Q 108 195 90 216" stroke="#D7E5EF" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+        <path d="M 126 160 Q 121 198 108 220" stroke="#D7E5EF" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+        <!-- Corpo: disco largo, desenhado por cima para cobrir todas as bases -->
+        <ellipse cx="100" cy="112" rx="62" ry="58" fill="url(#corpoPerola)" stroke="#B9CFDE" stroke-width="1.5"/>
+
+        <!-- Brilho perolado -->
+        <ellipse cx="86" cy="92" rx="26" ry="28" fill="rgba(255,255,255,0.55)"/>
+
+        <!-- Olho -->
+        <circle cx="133" cy="95" r="12" fill="#001F38"/>
+        <circle cx="137" cy="91" r="4.3" fill="#FFFFFF"/>
+        <circle cx="129" cy="99" r="1.9" fill="#FFFFFF" opacity="0.5"/>
+
+        <!-- Sobrancelha -->
+        <path id="peixeSobrancelha" d="M 120 77 Q 133 68 146 77" stroke="#001F38" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+
+        <!-- Boca -->
+        <path id="peixeBoca" d="M 136 120 Q 146 129 156 120" stroke="#001F38" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="intervalo-botoes">
+      <button class="intervalo-btn" data-intervalo="1h">1 Hora</button>
+      <button class="intervalo-btn active" data-intervalo="24h">24 Horas</button>
+      <button class="intervalo-btn" data-intervalo="7d">7 Dias</button>
+    </div>
+  </div>
+
+  <div class="grafico-box">
+    <canvas id="graficoHistorico"></canvas>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Mínimo no período</div>
+      <div class="stat-value" id="statMin">--</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Média no período</div>
+      <div class="stat-value" id="statMedia">--</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Máximo no período</div>
+      <div class="stat-value" id="statMax">--</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== Configuração específica deste sensor =====
+  const NOME_SENSOR = 'ph';
+  const UNIDADE = '';
+
+  const faixas = {
+    excelente: [6.6, 7.0],
+    bom: [[6.2, 6.6], [7.0, 7.4]],
+    atencao: [[5.8, 6.2], [7.4, 7.8]],
+  };
+
+  // Domínio fixo do eixo Y, com margem, para as zonas ficarem consistentes
+  const EIXO_Y_MIN = 4;
+  const EIXO_Y_MAX = 10;
+
+  function dentroDe(valor, intervalo) {
+    return valor >= intervalo[0] && valor <= intervalo[1];
+  }
+
+  function classificar(valor) {
+    if (valor === null || valor === undefined || isNaN(valor)) return null;
+    if (dentroDe(valor, faixas.excelente)) return { texto: 'Excelente', classe: 'excelente' };
+    if (faixas.bom.some(i => dentroDe(valor, i))) return { texto: 'Bom', classe: 'bom' };
+    if (faixas.atencao.some(i => dentroDe(valor, i))) return { texto: 'Atenção', classe: 'atencao' };
+    return { texto: 'Ruim', classe: 'ruim' };
+  }
+function atualizarExpressaoPeixe(classe) {
+  const boca = document.getElementById('peixeBoca');
+  const sobrancelha = document.getElementById('peixeSobrancelha');
+  const olho = document.getElementById('peixeOlho');
+  if (!boca || !sobrancelha) return;
+
+  if (classe === 'excelente') {
+    // Muito feliz: sorriso bem aberto, sobrancelha animada, olho maior
+    boca.setAttribute('d', 'M 132 118 Q 146 133 160 118');
+    sobrancelha.setAttribute('d', 'M 118 74 Q 133 62 148 74');
+    if (olho) olho.setAttribute('r', '13.5');
+  } else if (classe === 'bom') {
+    // Feliz, mais contido
+    boca.setAttribute('d', 'M 136 120 Q 146 129 156 120');
+    sobrancelha.setAttribute('d', 'M 120 77 Q 133 68 146 77');
+    if (olho) olho.setAttribute('r', '11');
+  } else if (classe === 'atencao') {
+    boca.setAttribute('d', 'M 136 124 L 156 124');
+    sobrancelha.setAttribute('d', 'M 120 76 L 146 76');
+    if (olho) olho.setAttribute('r', '11');
+  } else {
+    boca.setAttribute('d', 'M 136 127 Q 146 118 156 127');
+    sobrancelha.setAttribute('d', 'M 120 81 Q 133 89 146 81');
+    if (olho) olho.setAttribute('r', '11');
+  }
+}
+
+  // ===== Plugin customizado: desenha as zonas coloridas de fundo =====
+const zonasPlugin = {
+  id: 'zonasColoridas',
+  beforeDraw(chart) {
+    const { ctx, chartArea, scales } = chart;
+    const yScale = scales.y;
+
+    function desenharZona(min, max, cor, corBorda) {
+      const yTop = yScale.getPixelForValue(max);
+      const yBottom = yScale.getPixelForValue(min);
+      ctx.save();
+      ctx.fillStyle = cor;
+      ctx.fillRect(chartArea.left, yTop, chartArea.right - chartArea.left, yBottom - yTop);
+
+      // Linha de borda no topo da zona, para marcar a transição
+      ctx.strokeStyle = corBorda;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left, yTop);
+      ctx.lineTo(chartArea.right, yTop);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // Cores mais saturadas, iguais às dos badges de status do site
+    desenharZona(faixas.atencao[0][0], faixas.atencao[0][1], 'rgba(230, 168, 0, 0.55)', 'rgba(230, 168, 0, 0.9)');
+    desenharZona(faixas.atencao[1][0], faixas.atencao[1][1], 'rgba(230, 168, 0, 0.55)', 'rgba(230, 168, 0, 0.9)');
+    desenharZona(faixas.bom[0][0], faixas.bom[0][1], 'rgba(0, 200, 90, 0.55)', 'rgba(0, 200, 90, 0.9)');
+    desenharZona(faixas.bom[1][0], faixas.bom[1][1], 'rgba(0, 200, 90, 0.55)', 'rgba(0, 200, 90, 0.9)');
+    desenharZona(faixas.excelente[0], faixas.excelente[1], 'rgba(0, 174, 255, 0.6)', 'rgba(0, 174, 255, 0.95)');
+  }
+};
+
+  let grafico = null;
+
+  function formatarHoraEixo(isoString, intervalo) {
+    const data = new Date(isoString);
+    if (intervalo === '7d') {
+      return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    }
+    return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function carregarGrafico(intervalo) {
+    try {
+      const resp = await fetch(`http://${window.location.hostname}:3000/api/historico/${NOME_SENSOR}?intervalo=${intervalo}`);
+      const dados = await resp.json();
+
+      const labels = dados.map(d => formatarHoraEixo(d.tempo, intervalo));
+      const valores = dados.map(d => d.valor);
+
+      // Estatísticas do período
+      if (valores.length > 0) {
+        const min = Math.min(...valores);
+        const max = Math.max(...valores);
+        const media = valores.reduce((a, b) => a + b, 0) / valores.length;
+        document.getElementById('statMin').textContent = `${min.toFixed(1)}${UNIDADE}`;
+        document.getElementById('statMax').textContent = `${max.toFixed(1)}${UNIDADE}`;
+        document.getElementById('statMedia').textContent = `${media.toFixed(1)}${UNIDADE}`;
+      }
+
+      if (grafico) {
+        grafico.data.labels = labels;
+        grafico.data.datasets[0].data = valores;
+        grafico.update();
+        return;
+      }
+
+      const ctx = document.getElementById('graficoHistorico').getContext('2d');
+      grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Sólidos Dissolvidos',
+            data: valores,
+            borderColor: '#FFFFFF',
+            backgroundColor: 'rgba(18, 149, 255, 0.1)',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.3,
+            fill: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: EIXO_Y_MIN,
+              max: EIXO_Y_MAX,
+              ticks: { color: '#FFFFFF' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            x: {
+              ticks: { color: '#FFFFFF', maxRotation: 0 },
+              grid: { display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        },
+        plugins: [zonasPlugin]
+      });
+    } catch (erro) {
+      console.error('Erro ao carregar histórico:', erro);
+    }
+  }
+
+  async function carregarValorAtual() {
+    try {
+      const resp = await fetch(`http://${window.location.hostname}:3000/api/dados`);
+      const dados = await resp.json();
+      const valor = dados[NOME_SENSOR];
+
+      document.getElementById('valorAtual').textContent = valor ?? '--';
+      const hora = dados.ultimaAtualizacao ? new Date(dados.ultimaAtualizacao).toLocaleTimeString('pt-BR') : '--:--:--';
+      document.getElementById('ultimaAtualizacao').textContent = hora;
+
+      const resultado = classificar(valor);
+      if (resultado) {
+        const badge = document.getElementById('statusAtual');
+        badge.textContent = resultado.texto;
+        badge.className = `card-status ${resultado.classe}`;
+        atualizarExpressaoPeixe(resultado.classe);
+      }
+
+      document.getElementById('statusBadge').classList.remove('offline');
+      document.getElementById('statusBadge').classList.add('online');
+      document.getElementById('statusText').textContent = 'Online';
+    } catch (erro) {
+      document.getElementById('statusBadge').classList.remove('online');
+      document.getElementById('statusBadge').classList.add('offline');
+      document.getElementById('statusText').textContent = 'Offline';
+    }
+  }
+
+  // ===== Botões de intervalo =====
+  document.querySelectorAll('.intervalo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.intervalo-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      carregarGrafico(btn.dataset.intervalo);
+    });
+  });
+
+  // ===== Inicialização =====
+  carregarValorAtual();
+  carregarGrafico('24h');
+  setInterval(carregarValorAtual, 4000);
+</script>
+
+</body>
+</html>
