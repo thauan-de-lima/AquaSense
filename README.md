@@ -31,11 +31,11 @@ ESP32-based IoT system for aquarium monitoring and automation.
 
 ## 📊 Dashboard
 
-![Dashboard AquaSense](docs/Aquariumfrontend.png)
+![Dashboard AquaSense](docs/AquariumFrontendV2.png)
 
-![Dashboard Update] (docs/image.png)
+![Graphic AquaSense](docs/AquariumGraphicV2.png) 
 
-![Graphic AquaSense](docs/AquariumGraphic.png) 
+![Activity AquaSense](docs/AquariumAtiv.png) 
 
 ## 👨‍💻 Author
 **Thauan De Lima** — Computer Engineering student at FIAP
@@ -52,3 +52,7 @@ ESP32-based IoT system for aquarium monitoring and automation.
 - **13/07/2026** — Added custom icons for main logo and sensor navigation tabs; reorganized dashboard cards layout; restructured project folder to separate image assets into dedicated icons/ directory
 - **14/07/2026** — Programmed water flow sensor (ZJ-S201) firmware using interrupt-based pulse counting; implemented voltage divider circuit for safe 5V-to-3.3V signal conversion; calculated flow rate using manufacturer's K-factor
 - **15/07/2026** — Integrated water flow sensor into backend (MQTT subscription, InfluxDB persistence, status API) and frontend (dashboard card with real-time value, delta, and health classification); calibrated pump flow rate against recommended aquarium filtration standards
+- **16/07/2026** — Integrated BH1750 luminosity sensor, TDS Board V1.0, and turbidity sensor across the full stack (firmware, backend MQTT subscription and InfluxDB persistence, frontend dashboard cards); completed all 8 planned sensors except pH
+- **18/07/2026** — Started Oracle Cloud infrastructure migration; created VCN and public subnet for 24/7 backend hosting; began troubleshooting Always Free ARM capacity constraints in São Paulo region
+- **19/07/2026** — Decided to drop CO2 sensor integration (MH-Z19B measures atmospheric CO2, not suitable for dissolved CO2 monitoring); finalized sensor scope at 9 total cards
+- **19/07/2026** — Implemented historical data API endpoint (`/api/historico/:sensor`) with InfluxDB Flux queries and time-window aggregation; built sensor detail pages (water temperature, ambient temperature, turbidity, pH placeholder) with Chart.js line graphs, color-coded reference zones, and period statistics (min/max/average); added animated angelfish mascot with mood expressions reflecting sensor status; implemented mobile and tablet responsive layouts
