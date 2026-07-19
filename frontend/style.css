@@ -235,6 +235,73 @@ body {
 .card.empty {
   opacity: 0.55;
 }
+.detalhe-topo {
+  display: grid;
+  grid-template-columns: 260px 1fr 260px;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.peixe-mascote {
+  justify-self: center;
+}
+.intervalo-botoes {
+  justify-self: end;
+}
+  .valor-atual-box {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .valor-atual-box .card-value { font-size: 3.2rem; }
+  .intervalo-botoes {
+    display: flex;
+    gap: 8px;
+  }
+  .intervalo-btn {
+    background-color: var(--bg-secondary);
+    color: var(--text-light);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .intervalo-btn:hover { background-color: var(--border); }
+  .intervalo-btn.active {
+    background-color: var(--accent);
+    color: var(--text-dark);
+  }
+  .grafico-box {
+    background-color: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    height: 400px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .stat-card {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    font-weight: 700;
+  }
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-top: 8px;
+  }
 
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
@@ -245,6 +312,20 @@ body {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+    .detalhe-topo {
+    justify-content: center;
+    text-align: center;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .grafico-box {
+    height: 320px;
+    padding: 16px;
+  }
+
 }
 
 @media (max-width: 560px) {
@@ -254,4 +335,82 @@ body {
   .header-title {
     font-size: 1.3rem;
   }
+
+  .topbar-icons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 80%;
+    justify-items: center;
+    margin: 0 auto;
+
+  }
+  .sidebar-icon {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  /* ===== Celular: botões de navegação ===== */
+  .nav-tabs {
+    gap: 6px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .nav-tab {
+    padding: 8px 6px;
+    font-size: 0.7rem;
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  /* ===== Celular: páginas de detalhe ===== */
+  .detalhe-topo {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .peixe-mascote svg {
+    width: 130px;
+    height: 130px;
+  }
+  .valor-atual-box {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .valor-atual-box .card-value {
+    font-size: 2.4rem;
+  }
+  .intervalo-botoes {
+    width: 100%;
+    justify-content: center;
+  }
+  .intervalo-btn {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .grafico-box {
+    height: 260px;
+    padding: 12px;
+  }
 }
+
+.card-status {
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 10px 20px;
+  border-radius: 999px;
+  display: inline-block;
+  width: fit-content;
+  white-space: nowrap;
+}
+.card-status.excelente { background-color: #042288; color: #FFFFFF; }
+.card-status.bom       { background-color: #05af13; color: #FFFFFF; }
+.card-status.atencao   { background-color: #B8860B; color: #FFFFFF; }
+.card-status.ruim      { background-color: #8a0c0ce0; color: #FFFFFF; }
