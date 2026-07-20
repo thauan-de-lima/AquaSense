@@ -36,19 +36,6 @@
     align-items: center;
   }
 
-  .card-status {
-    font-size: 1rem;
-    font-weight: 800;
-    padding: 10px 20px;
-    border-radius: 999px;
-    display: inline-block;
-    width: fit-content;
-    white-space: nowrap;
-  }
-  .card-status.excelente { background-color: #042288; color: #FFFFFF; }
-  .card-status.bom       { background-color: #05af13; color: #FFFFFF; }
-  .card-status.atencao   { background-color: #B8860B; color: #FFFFFF; }
-  .card-status.ruim      { background-color: #8a0c0ce0; color: #FFFFFF; }
 </style>
 </head>
 <body>
@@ -67,7 +54,6 @@
 <div class="topbar">
   <div class="topbar-icons">
     <a href="ph.html" class="sidebar-icon" title="pH"><img src="icons/pH.png" alt="pH" style="width: 75%; height: 75%; object-fit: contain;"></a>
-    <a href="co2.html" class="sidebar-icon" title="CO₂"><img src="icons/co2.png" alt="CO₂" style="width: 75%; height: 75%; object-fit: contain;"></a>
     <a href="temperatura-agua.html" class="sidebar-icon" title="Temperatura da Água"><img src="icons/TempWater.png" alt="Temperatura da Água" style="width: 75%; height: 75%; object-fit: contain;"></a>
     <a href="temperatura-ambiente.html" class="sidebar-icon" title="Temperatura do Ambiente"><img src="icons/tempAir.png" alt="Temperatura do Ambiente" style="width: 75%; height: 75%; object-fit: contain;"></a>
     <a href="umidade.html" class="sidebar-icon" title="Umidade"><img src="icons/Umidade.png" alt="Umidade" style="width: 75%; height: 75%; object-fit: contain;"></a>
@@ -118,13 +104,6 @@
       <div class="card-updated">Última atualização: <span id="tempAmbiente-updated">--:--:--</span></div>
     </a>
 
-    <a href="co2.html" class="card empty">
-      <div class="card-label">CO₂</div>
-      <div><span class="card-value" id="co2">--</span><span class="card-unit">ppm</span></div>
-      <div class="card-delta" id="delta-co2"></div>
-      <div class="card-updated">Última atualização: <span id="co2-updated">--:--:--</span></div>
-    </a>
-
     <a href="nivel.html" class="card">
       <div class="card-label">Nível da Água</div>
       <div class="card-main-row">
@@ -149,10 +128,15 @@
       <div class="card-updated">Última atualização: <span id="umidade-updated">--:--:--</span></div>
     </a>
 
-    <a href="turbidez.html" class="card empty">
+    <a href="turbidez.html" class="card" id="card-turbidez">
       <div class="card-label">Turbidez</div>
-      <div><span class="card-value" id="turbidez">--</span></div>
-      <div class="card-delta" id="delta-turbidez"></div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value" id="turbidez">--</span><span class="card-unit">V</span></div>
+          <div class="card-delta" id="delta-turbidez"></div>
+        </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-turbidez"></span></div>
+      </div>
       <div class="card-updated">Última atualização: <span id="turbidez-updated">--:--:--</span></div>
     </a>
 
@@ -233,6 +217,11 @@
       excelente: [100, 250],
       bom: [[50, 100], [250, 350]],
       atencao: [[20, 50], [350, 500]],
+    },
+    turbidez: {
+      excelente: [4.0, 4.5],
+      bom: [[3.0, 4.0]],
+      atencao: [[2.0, 3.0]],
     },
   };
 
@@ -323,10 +312,18 @@
         document.getElementById('luminosidade-updated').textContent = hora;
         atualizarDelta('luminosidade', dados.luminosidade, ' lux');
         atualizarStatus('luminosidade', dados.luminosidade);
+
         document.getElementById('tds').textContent = dados.tds ?? '--';
         document.getElementById('tds-updated').textContent = hora;
         atualizarDelta('tds', dados.tds, ' ppm');
         atualizarStatus('tds', dados.tds);
+
+        document.getElementById('turbidez').textContent = dados.turbidez ?? '--';
+        document.getElementById('turbidez-updated').textContent = hora;
+        atualizarDelta('turbidez', dados.turbidez, ' V');
+        atualizarStatus('turbidez', dados.turbidez);
+
+
 
         // Sensores ainda não integrados no backend: mantém "--"
         // Quando pH, TDS, turbidez, luminosidade, vazão e CO2 forem integrados,

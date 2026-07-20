@@ -223,3 +223,6 @@ firmware/aquasense-firmware/include/credentials.h
 
 #Notas pessoais
 notas/
+
+#FrontEnd
+frontend/icons

@@ -16,6 +16,7 @@
 #define ECHO_PIN 7
 #define FLOW_PIN 13
 #define TDS_PIN 10
+#define TURBIDEZ_PIN 11
 
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
@@ -68,6 +69,16 @@ float lerTDS(float temperaturaAgua) {
              + 857.39 * tensaoCompensada) * 0.5;
 
   return tds;
+}
+
+float lerTurbidez() {
+  int leituraBruta = analogRead(TURBIDEZ_PIN);
+  float tensao = leituraBruta / (float)ADC_RESOLUTION * VREF;
+
+  float tensaoOriginal = tensao * 2.0;
+
+  return tensaoOriginal;
+
 }
 
 void conectarWiFi() {
@@ -228,6 +239,20 @@ if (tds < 0) {
   Serial.println(" ppm");
 
   mqtt.publish("aquasense/tds", String(tds).c_str());
+}
+// Sensor de Turbidez
+float turbidezVolts = lerTurbidez();
+
+Serial.print("Turbidez: ");
+Serial.print(turbidezVolts);
+Serial.println(" V");
+
+mqtt.publish("aquasense/turbidez", String(turbidezVolts).c_str());
+
+if (turbidezVolts < 2.5) {
+  Serial.println("ALERTA: Água muito turva!");
+} else {
+  Serial.println("Turbidez NORMAL.");
 }
 
   delay(2000);
