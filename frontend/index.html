@@ -228,6 +228,11 @@
       bom: [[3.0, 4.0]],
       atencao: [[2.0, 3.0]],
     },
+    ph: {
+      excelente: [6.6, 7.0],
+      bom: [[6.2, 6.6], [7.0, 7.4]],
+      atencao: [[5.8, 6.2], [7.4, 7.8]],
+    },
   };
 
   function dentroDe(valor, intervalo) {
@@ -283,7 +288,7 @@
   }
 
   function buscarDados() {
-    fetch(`http://${window.location.hostname}:3000/api/dados`)
+    fetch(`/api/dados`)
       .then(response => response.json())
       .then(dados => {
         const hora = formatarHora(dados.ultimaAtualizacao);
@@ -327,6 +332,11 @@
         document.getElementById('turbidez-updated').textContent = hora;
         atualizarDelta('turbidez', dados.turbidez, ' V');
         atualizarStatus('turbidez', dados.turbidez);
+
+        document.getElementById('ph').textContent = dados.ph ?? '--';
+        document.getElementById('ph-updated').textContent = hora;
+        atualizarDelta('ph', dados.ph, '');
+        atualizarStatus('ph', dados.ph);
 
 
 
