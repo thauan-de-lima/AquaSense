@@ -17,6 +17,7 @@
 #define FLOW_PIN 13
 #define TDS_PIN 10
 #define TURBIDEZ_PIN 11
+#define PH_PIN 12
 
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature sensors(&oneWire);
@@ -81,6 +82,15 @@ float lerTurbidez() {
 
 }
 
+float lerPH() {
+  int leituraBruta = analogRead(PH_PIN);
+  float tensao = leituraBruta / (float)ADC_RESOLUTION * VREF;
+
+  float ph = -11.58 * tensao + 20.72;
+
+  return ph;
+}
+
 void conectarWiFi() {
   Serial.print("Conectando ao Wi-Fi");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -128,6 +138,7 @@ void setup() {
 }
 
 void loop() {
+
   if (!mqtt.connected()) {
     conectarMQTT();
   }
@@ -253,6 +264,22 @@ if (turbidezVolts < 2.5) {
   Serial.println("ALERTA: Água muito turva!");
 } else {
   Serial.println("Turbidez NORMAL.");
+}
+
+// Módulo PH-4502C - pH da água
+float ph = lerPH();
+
+Serial.print("pH: ");
+Serial.println(ph, 2);
+
+mqtt.publish("aquasense/ph", String(ph).c_str());
+
+if (ph < 6.0) {
+  Serial.println("ALERTA: pH muito ácido!");
+} else if (ph > 7.5) {
+  Serial.println("ALERTA: pH muito alcalino!");
+} else {
+  Serial.println("pH NORMAL.");
 }
 
   delay(2000);
