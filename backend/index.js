@@ -29,6 +29,7 @@ const mqttClient = mqtt.connect(`mqtts://${process.env.MQTT_HOST}:${process.env.
 const TIMEOUT_OFFLINE = 5000; // 10 segundos
 
 let dadosAquario = {
+  ph: null,
   temperatura: null,
   temperaturaAmbiente: null,
   umidade: null,
@@ -76,6 +77,7 @@ mqttClient.on('connect', () => {
   mqttClient.subscribe('aquasense/luminosidade');
   mqttClient.subscribe('aquasense/tds');
   mqttClient.subscribe('aquasense/turbidez')
+  mqttClient.subscribe('aquasense/ph')
   console.log('Inscrito nos tópicos AquaSense');
 });
 
@@ -154,6 +156,15 @@ mqttClient.on('message', (topic, message) => {
     ultimaLeitura.turbidez = agora.getTime();
     const point = new Point('turbidez')
       .tag('sensor', 'turbidity-sensor-v1')
+      .tag('local', 'aquario')
+      .floatField('valor', valor);
+    writeApi.writePoint(point);
+  }
+  else if (topic === 'aquasense/ph') {
+    dadosAquario.ph = valor;
+    ultimaLeitura.ph = agora.getTime();
+    const point = new Point('ph')
+      .tag('sensor', 'ph4502c')
       .tag('local', 'aquario')
       .floatField('valor', valor);
     writeApi.writePoint(point);
