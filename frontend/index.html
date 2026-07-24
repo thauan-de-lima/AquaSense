@@ -73,10 +73,15 @@
 <div class="content">
   <main class="grid">
 
-    <a href="ph.html" class="card empty">
+    <a href="ph.html" class="card">
       <div class="card-label">pH da Água</div>
-      <div><span class="card-value">pH<span id="ph">--</span></span></div>
-      <div class="card-delta" id="delta-ph"></div>
+      <div class="card-main-row">
+        <div class="card-value-col">
+          <div><span class="card-value"id="ph">--</span><span class="card-unit"></span></div>
+          <div class="card-delta" id="delta-ph"></div>
+        </div>
+        <div class="card-status-wrap"><span class="card-status" id="status-ph"></span></div>  
+      </div>  
       <div class="card-updated">Última atualização: <span id="ph-updated">--:--:--</span></div>
     </a>
 
